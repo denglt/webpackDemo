@@ -1,12 +1,34 @@
 //import webpack from "webpack";
-
+const path = require('path');
+const fs   = require('fs');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+// console.log(__dirname);
+
+function deleteFolder(path) {
+    var files = [];
+    if( fs.existsSync(path) ) {
+        files = fs.readdirSync(path);
+        files.forEach(function(file,index){
+            var curPath = path + "/" + file;
+            if(fs.statSync(curPath).isDirectory()) { // recurse
+                deleteFolder(curPath);
+            } else { // delete file
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(path);
+    }
+}
+
+deleteFolder(path.resolve(__dirname , "public"));
+
 module.exports = {
     devtool: 'eval-source-map',  // [source-map,cheap-module-source-map,eval-source-map,cheap-module-eval-source-map]
     entry:  __dirname + "/app/main.js",//已多次提及的唯一入口文件
     output: {
-        path: __dirname + "/public",//打包后的文件存放的地方
+        path:  path.resolve(__dirname , "public"), //打包后的文件存放的地方
         filename: "bundle.js"//打包后输出文件的文件名
     },
     devServer: {

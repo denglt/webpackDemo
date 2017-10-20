@@ -2,6 +2,28 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");  // Extract text (CSS) from your bundles into a separate file
 
+
+const path = require('path');
+const fs   = require('fs');
+
+function deleteFolder(path) {
+    var files = [];
+    if( fs.existsSync(path) ) {
+        files = fs.readdirSync(path);
+        files.forEach(function(file,index){
+            var curPath = path + "/" + file;
+            if(fs.statSync(curPath).isDirectory()) { // recurse
+                deleteFolder(curPath);
+            } else { // delete file
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(path);
+    }
+}
+
+deleteFolder(path.resolve(__dirname , "public"));
+
 module.exports = {
     devtool: 'eval-source-map',  // [source-map,cheap-module-source-map,eval-source-map,cheap-module-eval-source-map]
     entry:  __dirname + "/app/main.js",//已多次提及的唯一入口文件
@@ -52,7 +74,9 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: __dirname + "/app/index.tmpl.html"//new 一个这个插件的实例，并传入相关的参数
         }),
-        new webpack.HotModuleReplacementPlugin(),//热加载插件
-        new ExtractTextPlugin("style.css")
+        new webpack.optimize.OccurrenceOrderPlugin(),//为组件分配ID，通过这个插件webpack可以分析和优先考虑使用最多的模块，并为它们分配最小的ID
+        new webpack.optimize.UglifyJsPlugin(), // 压缩JS代码
+        new ExtractTextPlugin("style.css"),  //分离CSS和JS文件
+        new webpack.HotModuleReplacementPlugin() //热加载插件
     ]
 };
