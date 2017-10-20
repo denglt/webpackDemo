@@ -10,7 +10,7 @@
 /build
 /babel-lib
 /.idea
-
+/public
 # misc
 .DS_Store
 .env.local
