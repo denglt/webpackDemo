@@ -29,7 +29,7 @@ module.exports = {
     entry:  __dirname + "/app/main.js",//已多次提及的唯一入口文件
     output: {
         path: __dirname + "/public",//打包后的文件存放的地方
-        filename: "bundle.js"//打包后输出文件的文件名
+        filename: "bundle-[hash].js"//打包后输出文件的文件名  缓存无处不在，使用缓存的最好方法是保证你的文件名和文件内容是匹配的
     },
     devServer: {
         contentBase: "./public",//本地服务器所加载的页面所在的目录
@@ -76,7 +76,7 @@ module.exports = {
         }),
         new webpack.optimize.OccurrenceOrderPlugin(),//为组件分配ID，通过这个插件webpack可以分析和优先考虑使用最多的模块，并为它们分配最小的ID
         new webpack.optimize.UglifyJsPlugin(), // 压缩JS代码
-        new ExtractTextPlugin("style.css"),  //分离CSS和JS文件
+        new ExtractTextPlugin("style-[hash].css"),  //分离CSS和JS文件
         new webpack.HotModuleReplacementPlugin() //热加载插件
     ]
 };
